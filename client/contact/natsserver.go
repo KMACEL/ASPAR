@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"net"
 
+	"github.com/KMACEL/ASPAR/client/databasecenter"
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/nats-io/go-nats"
 )
 
 var (
-	url           = "nats://localhost:4222"
+	url           = "nats://mke.systems:4222"
 	subjectGlobal = "global"
 	subjectMotor  = "motor"
 )
@@ -24,6 +26,13 @@ func ConnectNats() {
 	c.Subscribe(subjectMotor, ReciveMessage)
 
 	fmt.Scanln()
+}
+
+// FirstInstallation is
+func FirstInstallation() {
+	var d databasecenter.DB
+	db := d.Open("Client.db")
+	d.CreateTable(db)
 }
 
 // GetMacAddr is
