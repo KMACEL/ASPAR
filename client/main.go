@@ -3,7 +3,7 @@ package main
 import (
 	"sync"
 
-	"github.com/KMACEL/Aspar/client/contact"
+	"github.com/KMACEL/ASPAR/client/contact"
 )
 
 func main() {
