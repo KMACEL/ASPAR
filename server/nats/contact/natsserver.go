@@ -9,7 +9,6 @@ import (
 var (
 	url           = "nats://mke.systems:4222"
 	subjectGlobal = "global"
-	subjectMotor  = "motor"
 )
 
 // ConnectNats is
@@ -19,7 +18,6 @@ func ConnectNats() {
 	defer c.Close()
 
 	c.Subscribe(subjectGlobal, ReciveGlobal)
-	c.Subscribe(subjectMotor, ReciveMessage)
 
 	fmt.Scanln()
 }

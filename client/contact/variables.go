@@ -41,3 +41,9 @@ type MotorControlMessageJSON struct {
 		Pwm       int `json:"pwm"`
 	} `json:"motors"`
 }
+
+// DeviceInformation is
+type DeviceInformation struct {
+	DeviceID  string
+	TopicList []string
+}

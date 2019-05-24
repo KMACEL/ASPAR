@@ -33,6 +33,12 @@ const (
 	contact   = "contact"
 )
 
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
+
+// Pion is
 func Pion() {
 	addr := flag.String("address", ":8080", "Address to host the HTTP server on.")
 	flag.Parse()
@@ -115,39 +121,37 @@ func serve(addr string) error {
 			panic(err)
 		}
 	})
+	webSocketRead()
+	webSocketWrite("MERHABA")
+	// Start the server
+	return http.ListenAndServe(addr, nil)
+}
 
-	var upgrader = websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-	}
-
+func webSocketRead() {
 	// Web socket
-	http.HandleFunc("/echo", func(w http.ResponseWriter, r *http.Request) {
-		conn, _ := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
+	http.HandleFunc("/socketread", func(w http.ResponseWriter, r *http.Request) {
+		conn, _ := upgrader.Upgrade(w, r, nil)
 
 		for {
 			// Read message from browser
-			msgType, msg, err := conn.ReadMessage()
+			_, msg, err := conn.ReadMessage()
 			if err != nil {
 				return
 			}
-
 			// Print the message to the console
 			fmt.Printf("%s sent: %s\n", conn.RemoteAddr(), string(msg))
-
-			// Write message back to browser
-			if err = conn.WriteMessage(msgType, msg); err != nil {
-				return
-			}
-
-			if err = conn.WriteMessage(msgType, []byte("wmertacel")); err != nil {
-				return
-			}
 		}
 	})
+}
 
-	// Start the server
-	return http.ListenAndServe(addr, nil)
+func webSocketWrite(message string) {
+	http.HandleFunc("/socketwrite", func(w http.ResponseWriter, r *http.Request) {
+		conn, _ := upgrader.Upgrade(w, r, nil)
+		if err := conn.WriteMessage(1, []byte(message)); err != nil {
+			return
+		}
+
+	})
 }
 
 // getPages loads the examples from the pages.json file.

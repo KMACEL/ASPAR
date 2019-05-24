@@ -24,7 +24,7 @@ import (
 // It is aimed at fast, light, easy to use. Driver "github.com/mattn/go-sqlite3" has been selected.
 // You need to perform the necessary downloads before using the program.
 //     sudo apt-get install sqlite3
-//     go get github.com/mattn/go -sqlite3
+//     go get github.com/mattn/go-sqlite3
 
 // The DB was created to use the functions of the database center package.
 type DB struct{}

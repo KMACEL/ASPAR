@@ -2,12 +2,25 @@ package contact
 
 import (
 	"bytes"
+	"database/sql"
 	"fmt"
+	"log"
 	"net"
+	"os"
 
-	"github.com/KMACEL/ASPAR/client/databasecenter"
-	_ "github.com/mattn/go-sqlite3"
+	"github.com/KMACEL/ASPAR/common/databasecenter"
 	"github.com/nats-io/go-nats"
+)
+
+var (
+	dataBase databasecenter.DB
+	db       *sql.DB
+	client   nats.EncodedConn
+)
+
+const (
+	dataBaseName = "test.db"
+	tableName    = "user"
 )
 
 var (
@@ -19,20 +32,42 @@ var (
 // ConnectNats is
 func ConnectNats() {
 	nc, _ := nats.Connect(url)
-	c, _ := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
-	defer c.Close()
+	client, _ := nats.NewEncodedConn(nc, nats.JSON_ENCODER)
+	defer client.Close()
 
-	c.Subscribe(subjectGlobal, ReciveMessage)
-	c.Subscribe(subjectMotor, ReciveMessage)
+	client.Subscribe(subjectGlobal, ReciveMessage)
+	client.Subscribe(subjectMotor, ReciveMessage)
+
+	go databaseConnection()
 
 	fmt.Scanln()
 }
 
-// FirstInstallation is
-func FirstInstallation() {
-	var d databasecenter.DB
-	db := d.Open("Client.db")
-	d.CreateTable(db)
+func databaseConnection() {
+	if _, err := os.Stat(dataBaseName); !os.IsNotExist(err) {
+		db = dataBase.Open(dataBaseName)
+		defer dataBase.Close(db)
+		log.Println("DB is Open...")
+	} else {
+		db = dataBase.Open(dataBaseName)
+		defer dataBase.Close(db)
+		createDatabse(db)
+		log.Println("DB & Table is Created...")
+	}
+}
+
+func createDatabse(db *sql.DB) {
+	var dataBase databasecenter.DB
+	dataBase.CreateTable(db, tableName,
+		"deviceID varchar(20) PRIMARY KEY ,"+
+			"subject varchar(80)")
+}
+
+func getInfo() DeviceInformation {
+	//deviceID := GetMacAddr()
+	return DeviceInformation{
+		DeviceID:  GetMacAddr(),
+		TopicList: []string{"global", "motor", "pion", "sensor"}}
 }
 
 // GetMacAddr is
