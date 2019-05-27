@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/KMACEL/ASPAR/server/pion/internal/signal"
+	"github.com/KMACEL/ASPAR/common/pion/signal"
 	"github.com/pion/webrtc/v2"
 )
 

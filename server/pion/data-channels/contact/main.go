@@ -7,7 +7,7 @@ import (
 	"syscall/js"
 
 	"github.com/pion/webrtc/v2"
-	"github.com/KMACEL/ASPAR/internal/signal"
+	"github.com/KMACEL/ASPAR/common/internal/signal"
 )
 
 func main() {
